@@ -1594,6 +1594,17 @@
       };
     }
 
+    // [VWORKSPACE] Fix PUT DELETE MOVE COPY PROPFIND is denine by Admin
+    if (params.type !== 'POST' && params.type !== 'GET' && params.type !== 'HEAD') {
+      params.type = 'POST';
+      if (options.emulateJSON) params.data._method = type;
+      var beforeSend = options.beforeSend;
+      options.beforeSend = function(xhr) {
+        xhr.setRequestHeader('X-HTTP-Method-Override', type);
+        if (beforeSend) return beforeSend.apply(this, arguments);
+      };
+    }
+
     // Don't process data on a non-GET request.
     if (params.type !== 'GET' && !options.emulateJSON) {
       params.processData = false;
